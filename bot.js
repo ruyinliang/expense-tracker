@@ -79,30 +79,30 @@ bot.action('add_date', ctx => {
     })
 })
 
-bot.action('add_tmr', ctx => {
+bot.action('add_tmr', async ctx => {
     const today = new Date()
     const tomorrow = new Date(today)
     tomorrow.setDate(tomorrow.getDate() + 1)
     current_expense_detail.push(tomorrow.toLocaleDateString('en-GB'))
     console.log(current_expense_detail)
-    insert_data_to_db(current_expense_detail)
+    await insert_data_to_db(current_expense_detail, ctx)
     bot.telegram.sendMessage(ctx.chat.id, 'the gnome is looking at you suspiciously')
 })
 
-bot.action('add_ytd', ctx => {
+bot.action('add_ytd', async ctx => {
     const today = new Date()
     const yesterday = new Date(today)
     yesterday.setDate(yesterday.getDate() - 1)
     current_expense_detail.push(yesterday.toLocaleDateString('en-SG'))
     console.log(current_expense_detail)
-    insert_data_to_db(current_expense_detail)
+    await insert_data_to_db(current_expense_detail, ctx)
     bot.telegram.sendMessage(ctx.chat.id, 'the gnome is looking at you suspiciously')
 })
 
-bot.action('done', ctx => {
+bot.action('done', async ctx => {
     current_expense_detail.push(new Date().toLocaleDateString('en-SG'))
     console.log(current_expense_detail)
-    insert_data_to_db(current_expense_detail, ctx)
+    await insert_data_to_db(current_expense_detail, ctx)
     bot.telegram.sendMessage(ctx.chat.id, 'the gnome is looking at you suspiciously')
 })
 
