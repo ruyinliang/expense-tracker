@@ -9,7 +9,15 @@ let db = new sqlite3.Database(DBSOURCE, sqlite3.OPEN_READWRITE, (err) => {
     if (err) {
         return console.error(err.message);
     }
-    console.log('Connected to the in-memory SQlite database.');
+    console.log('Connected to SQlite database.');
+    var sql = "select * from Expenses where Date like '%20/10/2021%';"
+    db.run(sql, payload, (err, rows) => {
+        if (err) {
+            console.log(err)
+            return;
+        }
+        console.log(rows)
+    });
 });
 
 var current_expense_detail = []
