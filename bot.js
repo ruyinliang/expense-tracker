@@ -1,6 +1,8 @@
+require('dotenv').config()
+
 const Telegraf = require('telegraf').Telegraf;
-const bot = new Telegraf('');
-const DBSOURCE = ''
+const bot = new Telegraf(process.env.TELEGRAM_TOKEN);
+const DBSOURCE = process.env.DBSOURCE
 const sqlite3 = require('sqlite3').verbose();
 
 let db = new sqlite3.Database(DBSOURCE, sqlite3.OPEN_READWRITE, (err) => {
@@ -19,7 +21,7 @@ bot.command('clear', ctx => {
 })
 
 bot.hears(/^.+$/, ctx => {
-    if (ctx.message.from.id != 456) {
+    if (ctx.message.from.id != process.env.TELEGRAM_USER_ID) {
         bot.telegram.sendMessage(ctx.chat.id, 'you don\'t belong here. *casted out of the deep forest*')
         return
     }
