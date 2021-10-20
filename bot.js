@@ -14,6 +14,7 @@ var current_expense_detail = []
 var first_time_here = true
 
 bot.command('clear', ctx => {
+    first_time_here = true
     current_expense_detail = []
 })
 
