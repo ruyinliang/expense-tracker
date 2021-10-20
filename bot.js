@@ -7,17 +7,10 @@ const sqlite3 = require('sqlite3').verbose();
 
 let db = new sqlite3.Database(DBSOURCE, sqlite3.OPEN_READWRITE, (err) => {
     if (err) {
-        return console.error(err.message);
+        console.error(err.message)
+        return
     }
     console.log('Connected to SQlite database.');
-    var sql = "select * from Expenses where Date like '%20/10/2021%';"
-    db.run(sql, payload, (err, rows) => {
-        if (err) {
-            console.log(err)
-            return;
-        }
-        console.log(rows)
-    });
 });
 
 var current_expense_detail = []
@@ -118,7 +111,7 @@ async function insert_data_to_db(payload, ctx) {
     var sql = "INSERT INTO Expenses (Amount, Description, Category, Date) VALUES(?,?,?,?)"
     await db.run(sql, payload, (err, rows) => {
         if (err) {
-            console.log(err)
+            console.log(err.message)
             bot.telegram.sendMessage(ctx.chat.id, 'they found you. seems like the transformation potion lasts shroter for humans:(')
             return;
         }
