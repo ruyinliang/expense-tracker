@@ -1,8 +1,5 @@
 {
   "dependencies": {
-    "chart.js": "^3.5.1",
-    "chartjs-node-canvas": "^4.1.4",
-    "chartjs-plugin-labels": "^1.1.0",
     "dotenv": "^10.0.0",
     "sqlite3": "^5.0.2",
     "telegraf": "^4.4.2"
