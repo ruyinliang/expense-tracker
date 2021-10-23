@@ -54,7 +54,7 @@ var get_sum = function(list) {
 function get_current_date() {
     var today = new Date()
     today = today.toLocaleDateString('en-SG')
-    console.log("system date: ", date.now())
+    console.log("system date: ", Date.now())
     console.log("current day: ", today)
     return today
 }
