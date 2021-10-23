@@ -53,25 +53,31 @@ var get_sum = function(list) {
 
 function get_current_date() {
     var today = new Date()
-    today = today.toLocaleDateString('en-SG')
+    var utc = today.getTime() + (today.getTimezoneOffset() * 60000);
+    var today = new Date(utc + (3600000*8));
+    today = today.toLocaleDateString('en-SG').substr(0, 10)
     console.log("system date: ", Date.now())
     console.log("current day: ", today)
     return today
 }
 
 function get_yesterday() {
-    var today = new Date()
-    var yesterday = new Date(today)
-    yesterday.setDate(yesterday.getDate() - 1)
-    yesterday = yesterday.toLocaleDateString('en-SG')
+    var today = new Date();
+    var utc = today.getTime() + (today.getTimezoneOffset() * 60000);
+    var today = (new Date(utc + (3600000*8)));
+    var yesterday = (new Date(utc + (3600000*8)));
+    yesterday.setDate(today.getDate() - 1)
+    yesterday = yesterday.toLocaleString('en-SG').substr(0, 10)
     return yesterday
 }
 
 function get_tomorrow() {
-    var today = new Date()
-    var tomorrow = new Date(today)
-    tomorrow.setDate(tomorrow.getDate() + 1)
-    tomorrow = tomorrow.toLocaleDateString('en-SG')
+    var today = new Date();
+    var utc = today.getTime() + (today.getTimezoneOffset() * 60000);
+    var today = (new Date(utc + (3600000*8)));
+    var tomorrow = (new Date(utc + (3600000*8)));
+    tomorrow.setDate(today.getDate() + 1)
+    tomorrow = tomorrow.toLocaleString('en-SG').substr(0, 10)
     return tomorrow
 }
 
