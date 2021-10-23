@@ -56,8 +56,6 @@ function get_current_date() {
     var utc = today.getTime() + (today.getTimezoneOffset() * 60000);
     var today = new Date(utc + (3600000*8));
     today = today.toLocaleDateString('en-SG').substr(0, 10)
-    console.log("system date: ", Date.now())
-    console.log("current day: ", today)
     return today
 }
 

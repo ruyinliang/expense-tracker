@@ -1,6 +1,5 @@
 require('dotenv').config()
 const fs = require('fs');
-const { CanvasRenderService } = require('chartjs-node-canvas');
 
 const Telegraf = require('telegraf').Telegraf;
 const data_bot = new Telegraf(process.env.TELEGRAM_DATA_BOT_TOKEN);
