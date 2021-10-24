@@ -4,9 +4,9 @@ const entry_bot = new Telegraf(process.env.TELEGRAM_ENTRY_BOT_TOKEN);
 const DBSOURCE = process.env.DBSOURCE
 const sqlite3 = require('sqlite3').verbose();
 const {
-    get_tomorrow,
-    get_yesterday,
-    get_current_date,
+    get_today_string,
+    get_tomorrow_string,
+    get_yesterday_string,
     insert_expense_sql,
     insert_data_to_db
 } = require('./utils.js')
@@ -86,7 +86,7 @@ entry_bot.action('add_date', ctx => {
 })
 
 entry_bot.action('add_tmr', async ctx => {
-    const tomorrow = get_tomorrow()
+    const tomorrow = get_tomorrow_string()
     current_expense_detail.push(tomorrow)
     console.log(current_expense_detail)
     await add_expense_to_db(current_expense_detail, ctx)
@@ -94,7 +94,7 @@ entry_bot.action('add_tmr', async ctx => {
 })
 
 entry_bot.action('add_ytd', async ctx => {
-    const yesterday = get_yesterday()
+    const yesterday = get_yesterday_string()
     current_expense_detail.push(yesterday)
     console.log(current_expense_detail)
     await add_expense_to_db(current_expense_detail, ctx)
@@ -102,7 +102,7 @@ entry_bot.action('add_ytd', async ctx => {
 })
 
 entry_bot.action('done', async ctx => {
-    const today = get_current_date()
+    const today = get_today_string()
     current_expense_detail.push(today)
     console.log(current_expense_detail)
     await add_expense_to_db(current_expense_detail, ctx)

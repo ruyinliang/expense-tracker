@@ -44,9 +44,7 @@ data_bot.hears(/^target\W+(\d+)$/, async ctx => {
     const target = ctx.match[1].trim()
     const current_month = get_current_month()
     const data = []
-    data_bot.telegram.sendMessage(ctx.chat.id, 'bribing locksmith')
     await insert_data_to_db(db, set_target_sql, [current_month, target])
-    data_bot.telegram.sendMessage(ctx.chat.id, '*hiding the gold inside the cloak*')
 })
 
 data_bot.hears(/^jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec$/, async ctx => {
@@ -70,9 +68,7 @@ data_bot.hears(/^jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec$/, async ctx =>
 })
 
 async function get_expense_by_month(get_by_month_command, month, ctx) {
-    data_bot.telegram.sendMessage(ctx.chat.id, 'bribing locksmith')
     const expenses = await read_db_data(db, get_by_month_command, month)
-    data_bot.telegram.sendMessage(ctx.chat.id, '*hiding the gold inside the cloak*')
     return expenses
 }
 

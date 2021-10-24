@@ -51,39 +51,31 @@ var get_sum = function(list) {
     return list.reduce((partial_sum, current) => partial_sum + current['Amount'], 0).toFixed(2)
 }
 
-function get_current_date() {
-    var today = new Date()
-    var utc = today.getTime() + (today.getTimezoneOffset() * 60000);
-    var today = new Date(utc + (3600000*8));
-    today = today.toLocaleDateString('en-SG').substr(0, 10)
-    return today
+function get_current_sg_date() {
+    return new Date().getTime();
 }
 
-function get_yesterday() {
-    var today = new Date();
-    var utc = today.getTime() + (today.getTimezoneOffset() * 60000);
-    var today = (new Date(utc + (3600000*8)));
-    var yesterday = (new Date(utc + (3600000*8)));
-    yesterday.setDate(today.getDate() - 1)
-    yesterday = yesterday.toLocaleString('en-SG').substr(0, 10)
-    return yesterday
+function get_today_string() {
+    var today = new Date(get_current_sg_date())
+    return today.toLocaleDateString('en-SG').substr(0, 10)
 }
 
-function get_tomorrow() {
-    var today = new Date();
-    var utc = today.getTime() + (today.getTimezoneOffset() * 60000);
-    var today = (new Date(utc + (3600000*8)));
-    var tomorrow = (new Date(utc + (3600000*8)));
-    tomorrow.setDate(today.getDate() + 1)
-    tomorrow = tomorrow.toLocaleString('en-SG').substr(0, 10)
-    return tomorrow
+function get_yesterday_string() {
+    var today = get_current_sg_date()
+    var yesterday = new Date(today - (3600000*24))
+    return yesterday.toLocaleString('en-SG').substr(0, 10)
+}
+
+function get_tomorrow_string() {
+    var today = get_current_sg_date()
+    var yesterday = new Date(today + (3600000*24))
+    return yesterday.toLocaleString('en-SG').substr(0, 10)
 }
 
 function get_current_month() {
-    var today = new Date()
-    today = today.toLocaleDateString('en-SG')
-    today = today.substr(3)
-    return today
+    var today = get_today_string()
+    var current_month = today.substr(3)
+    return current_month
 }
 
 function get_current_week() {
@@ -95,9 +87,9 @@ function get_last_7_days() {
 }
 
 module.exports = {
-    get_tomorrow,
-    get_yesterday,
-    get_current_date,
+    get_tomorrow_string,
+    get_yesterday_string,
+    get_today_string,
     get_current_month,
     read_month_expenses_sql,
     group_by,
