@@ -31,8 +31,8 @@ let group_by = (xs, key) => {
     }, {});
 };
 
-let get_sum = (list) => {
-    return list.reduce((partial_sum, current) => partial_sum + current['Amount'], 0).toFixed(2)
+let get_sum = (list, key) => {
+    return list.reduce((partial_sum, current) => partial_sum + current[key], 0).toFixed(2)
 }
 
 let get_current_sg_date = () => {
