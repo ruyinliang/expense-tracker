@@ -14,6 +14,7 @@ const {
 } = require('./utils.js')
 const {
     READ_LAST_N_DAYS_RECORDS,
+    READ_GROUP_BY_DAY_SUM_COST,
     READ_CURRENT_MONTH_RECORDS,
     READ_CURRENT_MONTH_TARGET,
     INSERT_NEW_TARGET
@@ -43,10 +44,21 @@ let db = new sqlite3.Database(DBSOURCE, sqlite3.OPEN_READWRITE, (err) => {
 });
 
 data_bot.hears(/^target\W+(\d+)$/, async ctx => {
-    const target = ctx.match[1].trim()
-    const current_month = get_current_month()
-    const data = []
-    await insert_data_to_db(db, INSERT_NEW_TARGET, [current_month, target])
+    let target_budget = ctx.match[1].trim()
+    let current_month = get_current_month()
+    await insert_data_to_db(db, INSERT_NEW_TARGET, [current_month, target_budget])
+    data_bot.telegram.sendMessage(ctx.chat.id, `Target budget set to ${target_budget}`, {parse_mode: 'HTML'})
+})
+
+// Daily Average Cost By Month (Auto not included)
+data_bot.hears(/^avg$/, async ctx => {
+    let all_records = group_by(await read_db_data(db, READ_GROUP_BY_DAY_SUM_COST, []), 'Month')
+    let daily_avg_cost_str = "<b>Daily Avg Cost By Month</b>\n=============================\n"
+    for (const [month, items] of Object.entries(all_records)) {
+        let daily_avg_by_month = (get_sum(items, 'Total')/items.length).toFixed(2)
+        daily_avg_cost_str = daily_avg_cost_str.concat(`<b>${month}</b>: $${daily_avg_by_month}`, "\n")
+    }
+    data_bot.telegram.sendMessage(ctx.chat.id, daily_avg_cost_str, {parse_mode: 'HTML'})
 })
 
 data_bot.hears(/^\d+$/, async ctx => {
@@ -59,7 +71,7 @@ data_bot.hears(/^\d+$/, async ctx => {
         items.forEach(item => {
             last_n_days_records_str = last_n_days_records_str.concat(item['Category'], ', ', item['Description'], ', ', '$', item['Amount'], "\n")
         })
-        let sum_by_n_days = get_sum(items)
+        let sum_by_n_days = get_sum(items, 'Amount')
         last_n_days_records_str = last_n_days_records_str.concat(`<b>Total</b>: $${sum_by_n_days}\n`)
         last_n_days_records_str = last_n_days_records_str.concat("=============================\n")
     }
@@ -69,11 +81,11 @@ data_bot.hears(/^\d+$/, async ctx => {
 data_bot.hears(/^jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec$/, async ctx => {
     const month = months[ctx.match[0].trim()] + "/" + new Date().getFullYear().toString()
     const expense_details_by_month = await get_expense_by_month(READ_CURRENT_MONTH_RECORDS, month, ctx)
-    const sum_by_month = get_sum(expense_details_by_month)
+    const sum_by_month = get_sum(expense_details_by_month, 'Amount')
     const category_details = group_by(expense_details_by_month, 'Category')
     let category_details_copy = JSON.parse(JSON.stringify(category_details));
     for (const [category, items] of Object.entries(category_details_copy)) {
-        let sum_by_category = get_sum(items)
+        let sum_by_category = get_sum(items, 'Amount')
         category_details_copy[category] = sum_by_category
     }
     const current_month = get_current_month()
