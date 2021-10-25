@@ -7,9 +7,11 @@ const {
     get_today_string,
     get_tomorrow_string,
     get_yesterday_string,
-    insert_expense_sql,
     insert_data_to_db
 } = require('./utils.js')
+const {
+    INSERT_NEW_RECORD
+} = require('./sql.js')
 
 let db = new sqlite3.Database(DBSOURCE, sqlite3.OPEN_READWRITE, (err) => {
     if (err) {
@@ -111,8 +113,7 @@ entry_bot.action('done', async ctx => {
 
 async function add_expense_to_db(params, ctx) {
     entry_bot.telegram.sendMessage(ctx.chat.id, 'bribing locksmith')
-    const add_expense_sql = insert_expense_sql()
-    await insert_data_to_db(db, add_expense_sql, params)
+    await insert_data_to_db(db, INSERT_NEW_RECORD, params)
     entry_bot.telegram.sendMessage(ctx.chat.id, '*hiding the gold inside the cloak*')
     first_time_here = true
     current_expense_detail = []
