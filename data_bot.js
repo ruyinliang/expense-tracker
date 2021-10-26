@@ -1,6 +1,6 @@
 require('dotenv').config()
 const fs = require('fs');
-
+const CronJob = require('cron').CronJob;
 const Telegraf = require('telegraf').Telegraf;
 const data_bot = new Telegraf(process.env.TELEGRAM_DATA_BOT_TOKEN);
 const DBSOURCE = process.env.DBSOURCE
@@ -10,6 +10,7 @@ const {
     get_sum,
     insert_data_to_db,
     read_db_data,
+    get_today_string,
     get_current_month
 } = require('./utils.js')
 const {
@@ -17,7 +18,8 @@ const {
     READ_GROUP_BY_DAY_SUM_COST,
     READ_CURRENT_MONTH_RECORDS,
     READ_CURRENT_MONTH_TARGET,
-    INSERT_NEW_TARGET
+    INSERT_NEW_TARGET,
+    INSERT_AUTO_EXPENSES
 } = require('./sql.js')
 
 const months = {
@@ -50,15 +52,26 @@ data_bot.hears(/^target\W+(\d+)$/, async ctx => {
     data_bot.telegram.sendMessage(ctx.chat.id, `Target budget set to ${target_budget}`, {parse_mode: 'HTML'})
 })
 
+const fill_Auto_expenses_montly = new CronJob('00 00 00 1 * *', async function() {
+    let today = get_today_string()
+    await insert_data_to_db(db, INSERT_AUTO_EXPENSES, [today, today, today])
+});
+
 // Daily Average Cost By Month (Auto not included)
 data_bot.hears(/^avg$/, async ctx => {
     let all_records = group_by(await read_db_data(db, READ_GROUP_BY_DAY_SUM_COST, []), 'Month')
     let daily_avg_cost_str = "<b>Daily Avg Cost By Month</b>\n=============================\n"
+    let montly_expenses_target_str = "<b>Total Expenses and Target By Month</b>\n=============================\n"
     for (const [month, items] of Object.entries(all_records)) {
-        let daily_avg_by_month = (get_sum(items, 'Total')/items.length).toFixed(2)
+        let monthly_expenses = get_sum(items, 'Total')
+        let monthly_target = items[0]['Target']
+        let daily_avg_by_month = (monthly_expenses/items.length).toFixed(2)
+        let over_budget = (monthly_expenses-monthly_target).toFixed(2)
         daily_avg_cost_str = daily_avg_cost_str.concat(`<b>${month}</b>: $${daily_avg_by_month}`, "\n")
+        montly_expenses_target_str = montly_expenses_target_str.concat(`<b>${month}</b>: $${monthly_expenses}/$${monthly_target} \t over budget: $${over_budget > 0 ? over_budget : 0}`, "\n")
     }
     data_bot.telegram.sendMessage(ctx.chat.id, daily_avg_cost_str, {parse_mode: 'HTML'})
+    data_bot.telegram.sendMessage(ctx.chat.id, montly_expenses_target_str, {parse_mode: 'HTML'})
 })
 
 data_bot.hears(/^\d+$/, async ctx => {
@@ -107,6 +120,7 @@ const get_current_month_target = async current_month => {
     return target
 }
 
+fill_Auto_expenses_montly.start()
 data_bot.launch();
 
 process.once('SIGINT', () => data_bot.stop('SIGINT'))
