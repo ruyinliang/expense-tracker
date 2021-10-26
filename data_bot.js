@@ -49,7 +49,7 @@ data_bot.hears(/^target\W+(\d+)$/, async ctx => {
     let target_budget = ctx.match[1].trim()
     let current_month = get_current_month()
     await insert_data_to_db(db, INSERT_NEW_TARGET, [current_month, target_budget])
-    data_bot.telegram.sendMessage(ctx.chat.id, `Target budget set to ${target_budget}`, {parse_mode: 'HTML'})
+    data_bot.telegram.sendMessage(ctx.chat.id, `Target budget successfully set to ${target_budget}`, {parse_mode: 'HTML'})
 })
 
 const fill_Auto_expenses_montly = new CronJob('00 00 00 1 * *', async function() {
