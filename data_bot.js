@@ -11,7 +11,8 @@ const {
     insert_data_to_db,
     read_db_data,
     get_today_string,
-    get_current_month
+    get_current_month,
+    get_current_year
 } = require('./utils.js')
 const {
     READ_LAST_N_DAYS_RECORDS,
@@ -92,18 +93,20 @@ data_bot.hears(/^\d+$/, async ctx => {
 })
 
 data_bot.hears(/^jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec$/, async ctx => {
-    const month = months[ctx.match[0].trim()] + "/" + new Date().getFullYear().toString()
+    const current_year = get_current_year()
+    const month = months[ctx.match[0].trim()] + "/" + current_year
     const expense_details_by_month = await get_expense_by_month(READ_CURRENT_MONTH_RECORDS, month, ctx)
-    const sum_by_month = get_sum(expense_details_by_month, 'Amount')
+    let month_target = await get_month_target(month)
+    const sum_by_month = get_sum(expense_details_by_month, 'Amount').toFixed(2)
     const category_details = group_by(expense_details_by_month, 'Category')
     let category_details_copy = JSON.parse(JSON.stringify(category_details));
     for (const [category, items] of Object.entries(category_details_copy)) {
         let sum_by_category = get_sum(items, 'Amount')
-        category_details_copy[category] = sum_by_category
+        category_details_copy[category] = sum_by_category.toFixed(2)
+        if (category == 'Auto') month_target = (month_target + sum_by_category).toFixed(2)
     }
-    const current_month = get_current_month()
-    const current_month_target = await get_current_month_target(current_month)
-    data_bot.telegram.sendMessage(ctx.chat.id, `You have spent ${sum_by_month}/${current_month_target} in ${month}`)
+
+    data_bot.telegram.sendMessage(ctx.chat.id, `You have spent ${sum_by_month}/${month_target} in ${month}`)
     data_bot.telegram.sendMessage(ctx.chat.id,
         `<b>Auto</b>: $${category_details_copy['Auto']}, ${category_details['Auto'].length}, ${(100*(category_details_copy['Auto']/sum_by_month)).toFixed(2)}%\n<b>Food</b>: $${category_details_copy['Food']}, ${category_details['Food'].length}, ${(100*(category_details_copy['Food']/sum_by_month)).toFixed(2)}%\n<b>交通</b>: $${category_details_copy['交通']}, ${category_details['交通'].length}, ${(100*(category_details_copy['交通']/sum_by_month)).toFixed(2)}%\n<b>日常用品</b>: $${category_details_copy['日常用品']}, ${category_details['日常用品'].length}, ${(100*(category_details_copy['日常用品']/sum_by_month)).toFixed(2)}%\n<b>餐厅</b>: $${category_details_copy['餐厅']}, ${category_details['餐厅'].length}, ${(100*(category_details_copy['餐厅']/sum_by_month)).toFixed(2)}%`, {parse_mode: 'HTML'}
     )
@@ -114,7 +117,7 @@ const get_expense_by_month = async (get_by_month_command, month, ctx) => {
     return expenses
 }
 
-const get_current_month_target = async current_month => {
+const get_month_target = async current_month => {
     let target = await read_db_data(db, READ_CURRENT_MONTH_TARGET, current_month)
     target = target[0]['Target']
     return target

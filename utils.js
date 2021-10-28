@@ -32,7 +32,7 @@ let group_by = (xs, key) => {
 };
 
 let get_sum = (list, key) => {
-    return list.reduce((partial_sum, current) => partial_sum + current[key], 0).toFixed(2)
+    return list.reduce((partial_sum, current) => partial_sum + current[key], 0)
 }
 
 let get_current_sg_date = () => {
@@ -62,8 +62,10 @@ let get_current_month = () => {
     return current_month
 }
 
-function get_current_week() {
-
+let get_current_year = () => {
+    var today = get_today_string()
+    var current_year = today.substr(6)
+    return current_year
 }
 
 module.exports = {
@@ -71,6 +73,7 @@ module.exports = {
     get_yesterday_string,
     get_today_string,
     get_current_month,
+    get_current_year,
     group_by,
     get_sum,
     insert_data_to_db,
