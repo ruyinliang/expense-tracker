@@ -64,7 +64,7 @@ data_bot.hears(/^avg$/, async ctx => {
     let daily_avg_cost_str = "<b>Daily Avg Cost By Month</b>\n=============================\n"
     let montly_expenses_target_str = "<b>Total Expenses and Target By Month</b>\n=============================\n"
     for (const [month, items] of Object.entries(all_records)) {
-        let monthly_expenses = get_sum(items, 'Total')
+        let monthly_expenses = get_sum(items, 'Total').toFixed(2)
         let monthly_target = items[0]['Target']
         let daily_avg_by_month = (monthly_expenses/items.length).toFixed(2)
         let over_budget = (monthly_expenses-monthly_target).toFixed(2)
