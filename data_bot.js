@@ -85,7 +85,7 @@ data_bot.hears(/^\d+$/, async ctx => {
         items.forEach(item => {
             last_n_days_records_str = last_n_days_records_str.concat(item['Category'], ', ', item['Description'], ', ', '$', item['Amount'], "\n")
         })
-        let sum_by_n_days = get_sum(items, 'Amount')
+        let sum_by_n_days = get_sum(items, 'Amount').toFixed(2)
         last_n_days_records_str = last_n_days_records_str.concat(`<b>Total</b>: $${sum_by_n_days}\n`)
         last_n_days_records_str = last_n_days_records_str.concat("=============================\n")
     }
