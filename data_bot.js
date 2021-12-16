@@ -47,6 +47,10 @@ let db = new sqlite3.Database(DBSOURCE, sqlite3.OPEN_READWRITE, (err) => {
     console.log('Connected to SQlite database.');
 });
 
+data_bot.hears(/^test$/, async ctx => {
+    data_bot.telegram.sendMessage(ctx.chat.id, `testing`, {parse_mode: 'HTML'})
+})
+
 data_bot.hears(/^target\W+(\d+)$/, async ctx => {
     let target_budget = ctx.match[1].trim()
     let current_month = get_current_month()
