@@ -46,13 +46,14 @@ entry_bot.hears(/^.+$/, ctx => {
                     [{text: "日常用品", callback_data: '日常用品'}],
                     [{text: "诊所", callback_data: '诊所'}],
                     [{text: "餐厅", callback_data: '餐厅'}],
+                    [{text: "没用的玩意", callback_data: '没用的玩意'}]
                 ]
             }
         })
     }
 })
 
-entry_bot.action(/^交通|Food|餐厅|日常用品|诊所$/, ctx => {
+entry_bot.action(/^交通|Food|餐厅|日常用品|诊所|没用的玩意$/, ctx => {
     current_expense_detail.push(ctx.match[0].trim())
     console.log(current_expense_detail)
     if (!first_time_here && current_expense_detail.length == 3) {

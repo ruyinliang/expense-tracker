@@ -6,7 +6,7 @@ const READ_CATEGORIES = "SELECT * FROM Categories"
 
 const INSERT_NEW_RECORD = "INSERT INTO Expenses (Amount, Description, Category, Date) VALUES(?,?,?,?)"
 const INSERT_NEW_TARGET = "INSERT INTO Targets (Date, Target) VALUES(?, ?);"
-const INSERT_AUTO_EXPENSES = "INSERT INTO Expenses (Amount, Description, Category, Date) VALUES (800,'房租','Auto',?), (25,'电话费','Auto',?), (1.28,'iCloud','Auto',?)"
+const INSERT_AUTO_EXPENSES = "INSERT INTO Expenses (Amount, Description, Category, Date) VALUES (670,'房租','Auto',?), (25,'电话费','Auto',?), (1.28,'iCloud','Auto',?)"
 
 module.exports = {
     READ_LAST_N_DAYS_RECORDS,
